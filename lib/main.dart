@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gemini_flutter/blocs/genai_bloc.dart';
 import 'package:gemini_flutter/widgets/chat_bubble_widget.dart';
 import 'package:gemini_flutter/widgets/message_box_widget.dart';
 import 'package:gemini_flutter/worker/genai_worker.dart';
 
+import 'data/chat_content.dart';
+
 void main() {
-  runApp(MainApp());
+  runApp(BlocProvider<GenaiBloc>(
+    create: (context) => GenaiBloc(),
+    child: MainApp(),
+  ));
 }
 
 class MainApp extends StatelessWidget {
-  final GenAIWorker _worker = GenAIWorker();
-
   MainApp({super.key});
 
   @override
@@ -19,24 +24,26 @@ class MainApp extends StatelessWidget {
         body: Center(
           child: Column(
             children: [
-              Expanded(
-                  child: StreamBuilder<List<ChatContent>>(
-                      stream: _worker.stream,
-                      builder: (context, snapshot) {
-                        final List<ChatContent> data = snapshot.data ?? [];
+              Expanded(child: BlocBuilder<GenaiBloc, GenaiState>(builder: (context, state) {
+                final List<ChatContent> data = [];
+                if (state is MessageUpdate) {
+                  data.addAll(state.contents);
+                }
 
-                        return ListView(
-                            children: data.map((e) {
-                              final bool isMine = e.sender == Sender.user;
-                              final String? photoUrl = isMine ? null : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThr7qrIazsvZwJuw-uZCtLzIjaAyVW_ZrlEQ&s';
-                              return ChatBubble(isMine: isMine, photoUrl: photoUrl, message: e.message);
-                            },).toList()
-                        );
-                      }
-                  )),
+                return ListView(
+                    children: data.map(
+                  (e) {
+                    final bool isMine = e.sender == Sender.user;
+                    final String? photoUrl = isMine
+                        ? null
+                        : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThr7qrIazsvZwJuw-uZCtLzIjaAyVW_ZrlEQ&s';
+                    return ChatBubble(isMine: isMine, photoUrl: photoUrl, message: e.message);
+                  },
+                ).toList());
+              })),
               MessageBox(
                 onSendMessage: (value) {
-                  _worker.sendToGemini(value);
+                  context.read<GenaiBloc>().add(SendMessageEvent(value));
                 },
               )
             ],
