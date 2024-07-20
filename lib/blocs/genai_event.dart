@@ -7,7 +7,7 @@ sealed class GenaiEvent extends Equatable {
 class SendMessageEvent extends GenaiEvent{
   final String message;
 
-  SendMessageEvent(this.message);
+  const SendMessageEvent(this.message);
 
   @override
   List<Object?> get props => [message];
