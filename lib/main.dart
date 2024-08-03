@@ -3,19 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gemini_flutter/blocs/genai_bloc.dart';
 import 'package:gemini_flutter/widgets/chat_bubble_widget.dart';
 import 'package:gemini_flutter/widgets/message_box_widget.dart';
-import 'package:gemini_flutter/worker/genai_worker.dart';
 
 import 'data/chat_content.dart';
 
 void main() {
   runApp(BlocProvider<GenaiBloc>(
     create: (context) => GenaiBloc(),
-    child: MainApp(),
+    child: const MainApp(),
   ));
 }
 
 class MainApp extends StatelessWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {

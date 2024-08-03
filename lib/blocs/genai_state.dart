@@ -9,6 +9,7 @@ final class GenaiInitial extends GenaiState {
   List<Object> get props => [];
 }
 
+// ignore: must_be_immutable
 class MessageUpdate extends GenaiState{
   List<ChatContent> contents;
 

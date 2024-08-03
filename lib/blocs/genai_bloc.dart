@@ -27,12 +27,12 @@ class GenaiBloc extends Bloc<GenaiEvent, GenaiState> {
       final String? text = response.text;
 
       if (text == null) {
-        _content.add(ChatContent.gemini("Unable to generate response"));
+        _content.add(const ChatContent.gemini("Unable to generate response"));
       } else {
         _content.add(ChatContent.gemini(text));
       }
     } catch (e) {
-      _content.add(ChatContent.gemini("Unable to generate response"));
+      _content.add(const ChatContent.gemini("Unable to generate response"));
     }
 
     emitSafety(MessageUpdate(List.from(_content)));
